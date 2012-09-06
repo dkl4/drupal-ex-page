@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Module file for page_example module.
+ */
+
+/**
+ * @deffroup page_example Example : Page
+ * @ingroup examples
+ * @{
+ * This example demonstrates how a module can display a page at a given URL.
+ *
+ * It's important to understand how the menu system works in order to
+ * implement your own pages. See the Menu Example for some insight.
+ *
+ * @see menu_example.module
+ */
+
+/**
+ * Implements hook_help().
+ *
+ * Through hook_help(), a module can make documentation available to the user
+ * for the module as a whole or for specific paths. Where the help appears
+ * depends on the $path specified.
+ *
+ * In the first example below, the help text will appear on the simple page
+ * defined in hook_menu below in the region designated for help text.
+ *
+ * In the second example, the text will be available through the module page as
+ * a link beside the module or on the admin help page (admin/help) in the list
+ * of help topics using the name of the module. To specify help in the admin
+ * section use the module name in the path as in the second case below.
+ *
+ * @see hook_help()
+ */
+function page_example_help($path, $arg) {
+  switch ($path) {
+    case 'examples/page_example/simple':
+      // Help text for the above path
+      return t('This is help text for the simple page');
+    case 'admin/help#page_example':
+      return t('This is help text created in the page example\'s second case.');
+
+  }
+}
