@@ -40,6 +40,7 @@ function page_example_help($path, $arg) {
       // Help text for the above path
       return t('This is help text for the simple page');
     case 'admin/help#page_example':
+      // This is also viewable from a 'Help' link on the Module page
       return t('This is help text created in the page example\'s second case.');
 
   }
@@ -64,4 +65,76 @@ function page_example_permission() {
       'description' => t('Allow users to access page with arguments'),
     ),
   );
+}
+
+/**
+ * Implements hook_menu().
+ *
+ * Because hook_menu() registers URL paths for items defined by the function, it
+ * is necessary for modules that create pages. Each item can als specify a
+ * callback function for a given URL. The menu items returned here provide this
+ * information to the menu system.
+ *
+ * We will define some menus, and their paths will be interpreted as follows :
+ *
+ * If the user access http://example.com/?q=examples/page_example/simple,
+ * the menu system will first look for a menu item with that path. In this case
+ * it will find a match, and execute page_example_simple().
+ *
+ * If the user accesses http://?q=examples/page_example/arguments/1/2, the menu
+ * system will first look for examples/page_examples/arguments/1/2. Not finding
+ * a match, it will look for examples/page_example/arguments/1/%.  Again, not
+ * finding a match, it will look for examples/page_example/arguments/%/2.
+ * Yet again not finding a match, it will look for
+ * examples/page_example/arguments/%/%. This time it finds a match, and so will
+ * execute page_example_arguments(1, 2). Since the parameters are passed to
+ * the function after the match, the function can do additional checking or
+ * make use of them before executing the callback function.
+ *
+ * Menu Routing Priority
+ *   examples/page_example/arguments/1/2  => not finding fails to
+ *   examples/page_example/arguments/1/%  => not finding fails to
+ *   examples/page_example/arguments/%/2  => not finding fails to
+ *   examples/page_example/arguments/%/%  => calls page_example_arguments(1, 2)
+ *
+ * @see hook_menu()
+ * @see menu_example.module
+ */
+function page_example_menu() {
+  // This is the minimum information you can provide for a menu item. This menu
+  // item will be created in the default menu, usually Navigation
+  $items['examples/page_example'] = array(
+    'title'           => 'Page Example',
+    'page callback'   => 'page_example_description',
+    'access callback' => TRUE,
+    'expanded'        => TRUE,           // Maybe expands the visible menu tree?
+  );
+
+  $items['examples/page_example/simple'] = array(
+    'title'            => 'Simple - no arguments',
+    'page callback'    => 'page_example_simple',
+    'access arguments' => array('access simple page'),
+  );
+
+  // By using the MENU_CALLBACK type, we can register the callback for this
+  // path without the item appearing in the mneu; the admin cannot enable the
+  // item in the menu, either.
+  //
+  // Notice that 'page arguments' is an array of numbers. These will be
+  // replaced with the corresponding parts of the menu path. In this case a 0
+  // would be replaced by 'example', a 1 by 'page_example', and a 2 by
+  // 'arguments'.  3 and 4 will be replaced by whatever the user provides.
+  // These will be passed as arguments to the page_example_arguments() function.
+  //
+  // The numbers are the positional numbers in the URL slash-path
+  //       0          1          2       3    4
+  //   examples/page_example/arguments/arg3/arg4
+
+  $items['examples/page_example/arguments/%/$'] = array(
+    'page callback'    => 'page_example_arguments',
+    'page arguments'   => array(3, 4),
+    'access arguments' => array('access arguments page'),
+    'type'             => MENU_CALLBACK,
+  );
+  return $items;
 }
