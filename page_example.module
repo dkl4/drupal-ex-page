@@ -155,7 +155,25 @@ function page_example_description() {
         '@arguments_link' => url('examples/page_example/arguments/23/56', array('absolute' => TRUE)),
         )
       )
-   );
+  );
 }
 
-
+/**
+ * Constructs a simple page.
+ *
+ * The simple page callback, mapped to the path 'examples/page_example/simple'.
+ *
+ * Page callbacks return a renderable array with the content area of the page.
+ * The theme system will later render and surround the content in the
+ * appropriate blocks, navigation, and styling.
+ *
+ * If you do not want to use the theme system (for example for outputting an
+ * image or XML), you should print the content yourself and not return anything.
+ *
+ * If you do a simple print('Hi Mom!); the returned page is ONLY that print output
+ * with NO other markup of any kind.
+ */
+function page_example_simple() {
+  return array('#markup' => '<p>' . t('Simple page: The quick brown fox jumps over the lazy dog.') . '</p>');
+  //print('Hi Mom!');
+}
